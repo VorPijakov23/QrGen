@@ -1,28 +1,39 @@
-from qrcode.main import QRCode
+"""
+Модуль для создания QR-кодов.
+
+Этот модуль позволяет создавать QR-коды с настраиваемыми параметрами,
+которые загружаются из JSON-файла.
+"""
+
+import json
 from os import path
+from qrcode.main import QRCode
 from qrcode.constants import ERROR_CORRECT_L, ERROR_CORRECT_M, ERROR_CORRECT_Q, ERROR_CORRECT_H
 
 
 class CreateQR:
-    def __init__(self, data='hello', name='qrcode',
-                 version='1',
-                 box_size=10,
-                 border=2,
-                 fill_color='black',
-                 back_color='white',
-                 error_correction='M'):
-        self.data = data  # Дефолтная информация для кодировки
-        self.name = name  # Дефолтное название файла
-        # Версия QR кода (по умолчанию 1) версии 1-9, версии 10-26 и версии 27-40
-        self.version = version
-        self.box_size = int(box_size)  # Размер QR-кода (по умолчанию 10)
-        # Количество пустого пространства (по умолчанию 4)
-        self.border = int(border)
-        # Цвет для самого QR кода (по умолчанию black)
-        self.fill_color = fill_color
-        self.back_color = back_color  # Цвет фона (по умолчанию white)
-        # уровни восстановления ошибок (L, M, Q, H)
-        self.error_correction = error_correction.upper()
+    """
+    Класс для создания QR-кодов.
+
+    Этот класс позволяет создавать QR-коды с настраиваемыми параметрами,
+    которые загружаются из JSON-файла.
+    """
+
+    def __init__(self):
+        # Загружаем данные из JSON-файла
+        with open("conf.json", "r", encoding='utf-8') as f:
+            config = json.load(f)
+
+        # Дефолтная информация для кодирования
+        self.data = config['default_data']
+        self.name = config['default_file_name']  # Дефолтное название файла
+        self.version = int(config['qr_version'])  # Версия QR кода
+        self.box_size = int(config['box_size'])  # Размер QR-кода
+        self.border = int(config['border'])  # Количество пустого пространства
+        self.fill_color = config['fill_color']  # Цвет для самого QR кода
+        self.back_color = config['back_color']  # Цвет фона
+        # уровни восстановления ошибок
+        self.error_correction = config['error_correction'].upper()
         self.dep = {
             'L': ERROR_CORRECT_L,
             'M': ERROR_CORRECT_M,
@@ -34,7 +45,7 @@ class CreateQR:
         name = input('Write file name >>> ')
         if not name.strip():
             name = self.name
-        return '{}.png'.format(name)
+        return f'{name}.png'
 
     def _get_data(self):
         data = input('Write data >>> ')
@@ -43,6 +54,12 @@ class CreateQR:
         return data
 
     def run(self):
+        """
+        Основной метод для запуска программы.
+
+        Этот метод запускает процесс создания QR-кода с использованием
+        настроек, загруженных из JSON-файла.
+        """
         try:
             name = self._get_name()
             data = self._get_data()
@@ -59,8 +76,8 @@ class CreateQR:
             img = qr.make_image(fill_color=self.fill_color,
                                 back_color=self.back_color)
             img.save(name)
-            absp = path.abspath(name)
-            print(f"Путь QR-кода > {absp}\n"
+            abs_path = path.abspath(name)
+            print(f"Путь QR-кода > {abs_path}\n"
                   f"1) Кодированный текст > {data}\n"
                   f"2) Название файла > {name}\n"
                   f"3) Версия QR-кода > {self.version}\n"
@@ -78,8 +95,8 @@ class CreateQR:
 
 
 def main() -> None:
-    cur = CreateQR(data='hi', name='file', version='6',
-                   box_size=15, border=5, error_correction='H')
+    """Главная функция"""
+    cur = CreateQR()
     cur.run()
 
 
