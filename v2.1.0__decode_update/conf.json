@@ -1,0 +1,12 @@
+{
+  "default_data": "hello",
+  "default_file_name": "qrcode",
+  "qr_version": "1",
+  "error_correction": "M",
+  "box_size": "10",
+  "border": "2",
+  "fill_color": "black",
+  "back_color": "white",
+  "download_temp_file_name": "temp.jpg",
+  "url_or_path": "https://ixbt.online/live/images/original/24/67/86/2022/07/19/c145c2d9c7.jpg"
+}
